@@ -7,13 +7,13 @@ const db = {};
 
 mongoose.connect(
   `mongodb://${config.hostName}:${config.port}/${config.dbName}`,
-  { useNewUrlParser: true }
+  { useNewUrlParser: true, useUnifiedTopology: true }
 );
 
 fs.readdirSync(__dirname)
   .filter((file) => file !== baseName && /.js$/.test(file))
   .forEach((file) => {
-    const model = require(db);
+    const model = require(path.resolve(__dirname, file));
     db[model.modelName] = model;
   });
 

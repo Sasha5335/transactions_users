@@ -6,7 +6,11 @@ const { port, SOCKET_EVENTS } = require('./configs');
 
 const server = http.createServer(app);
 
-const io = SocketServer(server);
+const cors = {
+  origin: 'http://localhost:3000',
+};
+
+const io = SocketServer(server, { cors });
 
 io.on('connection', (socket) => {
   console.log('connect to socket');
