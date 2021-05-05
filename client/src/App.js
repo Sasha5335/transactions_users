@@ -1,23 +1,47 @@
-import logo from './logo.svg';
-import './App.css';
+import { useEffect, useLayoutEffect } from 'react';
+import { Formik, Form, Field } from 'formik';
+import { useSelector, useDispatch } from 'react-redux';
+import { bindActionCreators } from 'redux';
+import * as TransactionActionCreators from './actions/transactionActionCreators';
 
-function App() {
+function App(props) {
+  const { transactions, isFetching, error } = useSelector(
+    (state) => state.transaction
+  );
+  const dispatch = useDispatch();
+  const {
+    getTransactionsRequest,
+    createTransactionRequest,
+  } = bindActionCreators(TransactionActionCreators, dispatch);
+
+  useEffect(() => {
+    getTransactionsRequest();
+  }, []);
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div>
+      <Formik
+        onSubmit={(values, formikBag) => {
+          createTransactionRequest(values);
+          formikBag.setFieldValue('text', '');
+        }}
+        initialValues={{
+          name: '',
+          text: '',
+        }}
+      >
+        <Form>
+          <Field name="name" placeholder="name" />
+          <Field name="text" placeholder="text" />
+          <button type="submit">Send transaction</button>
+        </Form>
+      </Formik>
+      <ul>
+        {isFetching && <li>Messages is loading...</li>}
+        {transactions.map((msg) => (
+          <li key={msg._id}>{JSON.stringify(msg, null, 8)}</li>
+        ))}
+      </ul>
     </div>
   );
 }

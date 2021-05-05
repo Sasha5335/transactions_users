@@ -1,0 +1,6 @@
+export const SOCKET_EVENTS = {
+  NEW_TRANSACTION: 'NEW_TRANSACTION',
+  NEW_TRANSACTION_ERROR: 'NEW_TRANSACTION_ERROR',
+};
+
+export const BASE_URL = 'localhost:5000';
