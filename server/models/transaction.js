@@ -1,19 +1,32 @@
-const mongoose = require('mongoose');
+'use strict';
+const { Model } = require('sequelize');
 
-const transactionSchema = new mongoose.Schema(
-  {
-    text: {
-      type: String,
-      required: true,
+module.exports = (sequelize, DataTypes) => {
+  class Transaction extends Model {
+    static associate(models) {
+      Transaction.belongsToMany(models.User, {
+        through: 'powers_to_heroes',
+        foreingKey: 'userId',
+      });
+    }
+  }
+  Transaction.init(
+    {
+      transaction: {
+        type: DataTypes.STRING,
+        allowNull: false,
+        validate: {
+          notNull: true,
+          notEmpty: true,
+        },
+      },
     },
-    user: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: 'User',
-    },
-  },
-  { timestamps: true }
-);
-
-const Transaction = mongoose.model('Transaction', transactionSchema);
-
-module.exports = Transaction;
+    {
+      sequelize,
+      modelName: 'Transaction',
+      tableName: 'transactions',
+      underscored: true,
+    }
+  );
+  return Transaction;
+};

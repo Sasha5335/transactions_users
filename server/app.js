@@ -1,22 +1,16 @@
 const express = require('express');
-const cors = require('cors');
-const { Transaction } = require('./models');
+const router = require('./routes');
 const app = express();
 
-app.use(cors());
 app.use(express.json());
-
-app.get('/', async (req, res, next) => {
-  try {
-    const transactions = await Transaction.find();
-    res.send({ data: transactions });
-  } catch (error) {
-    next(error);
-  }
-});
+app.use('/api', router);
 
 app.use((err, req, res, next) => {
-  res.status(500).send(err);
+  const status = err.status || 500;
+
+  res.status(status).send({
+    errors: [{ message: err.message || 'Server error' }],
+  });
 });
 
 module.exports = app;
